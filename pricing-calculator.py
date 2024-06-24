@@ -2,7 +2,9 @@ import tiktoken
 from dotenv import load_dotenv
 import typing
 import os
-load_dotenv()
+import json
+import argparse
+load_dotenv();
 
 def count_num_tokens_message(messages: list[dict], model_name: str) -> int:
     """Return number of tokens per message
@@ -29,13 +31,13 @@ def count_num_tokens_message(messages: list[dict], model_name: str) -> int:
         tokens_per_name = -1  # if there's a name, the role is omitted
     elif "gpt-3.5-turbo" in model_name:
         print("Warning: gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613.")
-        return count_num_tokens_message(messages, model="gpt-3.5-turbo-0613")
+        return count_num_tokens_message(messages, model_name="gpt-3.5-turbo-0613")
     # elif "gpt-4o" in model_name:
     #     print("Warning: gpt-4o may update over time. Returning num tokens assuming gpt-4o-2024-05-13")
     #     return count_num_tokens_message(messages, model="gpt-4o-2024-05-13")
     elif "gpt-4" in model_name:
         print("Warning: gpt-4 may update over time. Returning num tokens assuming gpt-4-0613.")
-        return count_num_tokens_message(messages, model="gpt-4-0613")
+        return count_num_tokens_message(messages, model_name="gpt-4-0613")
     else:
         raise NotImplementedError(
             f"""num_tokens_from_messages() is not implemented for model {model_name}."""
@@ -51,10 +53,26 @@ def count_num_tokens_message(messages: list[dict], model_name: str) -> int:
     return num_tokens
 
     
+def read_messages_from_file(file_path: str) -> dict:
+    with open(file_path, 'r') as file:
+        data = json.load(file)
 
-
+    return data
 
 
 if __name__ == '__main__':
-    MODEL_NAME = os.getenv("MODEL_NAME")
-    encoding = tiktoken.encoding_for_model(MODEL_NAME)
+    # MODEL NAME and FILE NAME are required parameters
+    parser = argparse.ArgumentParser(description='Read and print JSON data from a file.')
+    parser.add_argument('model_name', type=str, help='The GPT model used for computation.')
+    parser.add_argument('file_name', type=str, help='The name of the JSON file to read.')
+    
+    args = parser.parse_args()
+
+    # Read Input file
+    messages = read_messages_from_file(args.file_name)
+
+    # Compute the number of tokens
+    num_tokens = count_num_tokens_message(messages, args.model_name)
+
+    print(f"{num_tokens} prompt tokens counted by count_num_tokens_message().")
+
