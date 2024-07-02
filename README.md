@@ -10,7 +10,8 @@ pip install tiktoken
 **Example input**
 
 ```json
-example_messages = [
+
+example_message = [
     {
         "role": "system",
         "content": "You are a helpful, pattern-following assistant that translates corporate jargon into plain English.",
@@ -45,8 +46,8 @@ example_messages = [
 **Command**
 
 Input Params:
-- model_name: `gpt-4`, `gpt-3.5`...
-- file_path: JSON
+- `--model_name`: `gpt-4`, `gpt-3.5`...
+- `--file_path`: JSON
 
 ```python
 python pricing-calculator.py gpt-4 messages_example.json
