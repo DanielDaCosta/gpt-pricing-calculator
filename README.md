@@ -10,7 +10,6 @@ pip install tiktoken
 **Example input**
 
 ```json
-
 example_message = [
     {
         "role": "system",
